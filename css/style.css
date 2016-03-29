@@ -12,3 +12,19 @@ body{
     font-size: 17px;
     border-bottom: 1px solid #66afe9;
 }
+.list-2:after{
+    content: '';
+    display: block;
+    clear: both;
+}
+.list-2 li{
+    float: left;
+}
+.list-2 li:nth-child(odd){
+    width: 44%;
+    margin-right: 3%;
+}
+.list-2 li:nth-child(even){
+    width: 44%;
+    margin-left: 3%;
+}
