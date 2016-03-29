@@ -12,6 +12,9 @@ body{
     font-size: 17px;
     border-bottom: 1px solid #66afe9;
 }
+.align-left{
+    text-align: left !important;
+}
 .list-2:after{
     content: '';
     display: block;
