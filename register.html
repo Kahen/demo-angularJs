@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<div class="container main" data-ng-controller="loginCtrl">
+    <form class="form-horizontal" name="loginForm" novalidate >
+        <div class="form-group ">
+            <div class="col-sm-offset-4 col-sm-3">
+                <h2 class="title">登录</h2>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-3">
+                <input type="text" class="form-control" name="username" ng-model="username" value="" ng-focus="hide()" ng-blur="checkName()" placeholder="输入用户名" required>
+                    <span class="red" data-ng-show="loginForm.username.$dirty && loginForm.username.$invalid">
+                        <span data-ng-show="loginForm.username.$error.required">用户名不能为空</span>
+                    </span>
+                <span class="red" ng-model="check_tips">
+                        {{check_tips}}
+                </span>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-3">
+                <input type="password" class="form-control" name="password" ng-model="password" value="" ng-focus="hide()"  placeholder="密码" required>
+                    <span class="red" data-ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
+                        <span data-ng-show="loginForm.password.$error.required">密码不能为空</span>
+                    </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-3">
+                <input type="password" class="form-control" name="repassword" ng-model="repassword" value="" ng-focus="hide()" ng-blur="checkPass()" placeholder="确认密码" required>
+                    <span class="red" data-ng-show="loginForm.repassword.$dirty && loginForm.repassword.$invalid">
+                        <span data-ng-show="loginForm.repassword.$error.required">确认密码不能为空</span>
+                    </span>
+                <span class="red" ng-model="tips">{{tips}}</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-3">
+                <button class="btn btn-primary" value="" data-ng-click = "submit()">注册</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+<script src="js/myApp.js"></script>
+<script>
+    myApp.controller('loginCtrl', function ($scope,$http) {
+
+        $scope.username   = '';
+        $scope.password   = '';
+        $scope.repassword = '';
+        $scope.tips       = '';
+        $scope.correct    = true;
+
+
+        $scope.hide = function () {
+            $scope.check_tips = ' '
+            $scope.tips = ''
+
+        }
+        $scope.checkName = function () {
+            $http.get("json/user_info.json")
+                    .success(function (response) {
+                        $scope.userList = response.users;
+
+                        $scope.correct = true;
+
+                        angular.forEach($scope.userList, function (item) {
+                            if($scope.username == item.username ){
+                                $scope.check_tips = '用户名已经存在';
+                                $scope.correct = false;
+                            }
+                        })
+                    })
+        }
+
+        $scope.checkPass = function () {
+            if($scope.password != $scope.repassword){
+                $scope.tips = '两次密码不一样'
+                $scope.correct = false;
+            }else{
+                $scope.correct = true;
+            }
+        }
+        $scope.submit = function(){
+                if($scope.correct){
+                    var newUser = {
+                        username:$scope.username,
+                        password:$scope.password
+                    }
+                    $http.post('json/user_info.json',newUser)
+                            .success(function () {
+                               localStorage.setItem('username',$scope.username)
+                               localStorage.setItem($scope.password+'P',$scope.password)
+
+                                alert('注册成功,新注册的用户名和密码使用的是本地存储,当换浏览器请重新注册')
+                                window.location.href = 'index.html'
+                            })
+                }
+
+
+           /* var newBook = {
+                isbn: $scope.newBook.isbn,
+                title: $scope.newBook.title,
+                year: $scope.newBook.year
+            };
+
+            $http.post('api/books.json', newBook).success(function(){
+                $scope.msg = 'Data saved';
+            }).error(function(data) {
+                alert("failure message:" + JSON.stringify({data:data}));
+            });*/
+        }
+
+    })
+</script>
+</body>
+</html>
